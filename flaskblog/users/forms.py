@@ -1,8 +1,18 @@
-from flask_wtf import FlaskForm
-from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
-from wtforms.validators import DataRequired,Length,Email, EqualTo, ValidationError
-from flask_login import current_user
+try:
+    from flask_wtf import FlaskForm
+    from flask_wtf.file import FileField, FileAllowed
+    from wtforms import StringField, PasswordField, SubmitField, BooleanField
+    from wtforms.validators import DataRequired,Length,Email, EqualTo, ValidationError
+except ImportError:
+    from flaskblog.mock_extensions import FlaskForm, StringField, PasswordField, SubmitField, BooleanField
+    from flaskblog.mock_extensions import DataRequired, Length, Email, EqualTo, ValidationError
+    FileField = StringField
+    FileAllowed = DataRequired
+
+try:
+    from flask_login import current_user
+except ImportError:
+    from flaskblog.mock_extensions import current_user
 from flaskblog.models import User
 
 class RegistrationForm(FlaskForm):

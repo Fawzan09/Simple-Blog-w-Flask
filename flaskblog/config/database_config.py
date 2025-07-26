@@ -1,6 +1,9 @@
-
+"""
+Database configuration for Flask Blog
+Supports both SQLite (development) and MySQL (production)
+"""
 import os
-from flaskblog.secrets import Secrets
+from urllib.parse import quote_plus
 
 class DatabaseConfig:
     @staticmethod
@@ -16,32 +19,21 @@ class DatabaseConfig:
         
         if all([mysql_host, mysql_user, mysql_password, mysql_db]):
             # Use MySQL if all required environment variables are set
-            from urllib.parse import quote_plus
             password_encoded = quote_plus(mysql_password)
             return f'mysql+pymysql://{mysql_user}:{password_encoded}@{mysql_host}/{mysql_db}'
         else:
             # Fallback to SQLite for development
             return 'sqlite:///site.db'
-
-class Config:
-	secretsObj = Secrets()
-	SECRET_KEY = secretsObj.SECRET_KEY
-	
-	# Database Configuration - supports both SQLite and MySQL
-	SQLALCHEMY_DATABASE_URI = DatabaseConfig.get_database_uri()
-	SQLALCHEMY_TRACK_MODIFICATIONS = False
-	
-	# Mail Configuration
-	MAIL_SERVER = 'smtp.googlemail.com'
-	MAIL_PORT = 587
-	MAIL_USE_TLS = True
-	MAIL_USERNAME = secretsObj.EMAIL_ADDRESS
-	MAIL_PASSWORD = secretsObj.PASSWORD
-	
-	# File Upload Configuration
-	UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'uploads')
-	MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max file size
-	
-	# Security Configuration
-	WTF_CSRF_ENABLED = True
-	WTF_CSRF_TIME_LIMIT = None
+    
+    @staticmethod
+    def get_mysql_config():
+        """
+        Returns MySQL configuration dictionary
+        """
+        return {
+            'host': os.environ.get('MYSQL_HOST', 'localhost'),
+            'user': os.environ.get('MYSQL_USER', 'flaskblog'),
+            'password': os.environ.get('MYSQL_PASSWORD', ''),
+            'database': os.environ.get('MYSQL_DATABASE', 'flaskblog'),
+            'port': int(os.environ.get('MYSQL_PORT', 3306))
+        }

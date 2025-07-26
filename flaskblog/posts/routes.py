@@ -1,7 +1,10 @@
 from flask import render_template, url_for, flash, redirect, request, abort, Blueprint
-from flask_login import current_user, login_required
+try:
+    from flask_login import current_user, login_required
+except ImportError:
+    from flaskblog.mock_extensions import current_user, login_required
 from flaskblog import db
-from flaskblog.models import Post
+from flaskblog.models import Post, Review
 from flaskblog.posts.forms import PostForm
 
 posts = Blueprint('posts',__name__)
@@ -21,7 +24,8 @@ def new_post():
 @posts.route("/posts/<int:post_id>",methods=['GET','POST'])
 def post(post_id):
     post=Post.query.get_or_404(post_id)
-    return render_template('post.html', title=post.title, post=post)
+    reviews = Review.query.filter_by(post_id=post_id).order_by(Review.date_posted.desc()).all()
+    return render_template('post.html', title=post.title, post=post, reviews=reviews)
 
 @posts.route("/posts/<int:post_id>/update",methods=['GET','POST'])
 @login_required

@@ -1,0 +1,292 @@
+/* Modern Theme CSS for Flask Blog */
+:root {
+  /* Light theme colors */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-accent: #e9ecef;
+  --text-primary: #212529;
+  --text-secondary: #6c757d;
+  --text-muted: #adb5bd;
+  --border-color: #dee2e6;
+  --accent-color: #0d6efd;
+  --accent-hover: #0b5ed7;
+  --success-color: #198754;
+  --warning-color: #ffc107;
+  --danger-color: #dc3545;
+  --navbar-bg: #343a40;
+  --navbar-text: #ffffff;
+}
+
+/* Dark theme colors */
+[data-theme="dark"] {
+  --bg-primary: #212529;
+  --bg-secondary: #343a40;
+  --bg-accent: #495057;
+  --text-primary: #ffffff;
+  --text-secondary: #adb5bd;
+  --text-muted: #6c757d;
+  --border-color: #495057;
+  --accent-color: #0d6efd;
+  --accent-hover: #0b5ed7;
+  --success-color: #198754;
+  --warning-color: #ffc107;
+  --danger-color: #dc3545;
+  --navbar-bg: #0d1117;
+  --navbar-text: #f0f6fc;
+}
+
+/* Base styles */
+body {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  margin-top: 5rem;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary);
+}
+
+/* Navbar */
+.navbar-custom {
+  background-color: var(--navbar-bg) !important;
+  transition: background-color 0.3s ease;
+}
+
+.navbar-custom .navbar-nav .nav-link {
+  color: var(--navbar-text) !important;
+  transition: color 0.3s ease;
+}
+
+.navbar-custom .navbar-nav .nav-link:hover {
+  color: var(--accent-color) !important;
+}
+
+.navbar-custom .navbar-brand {
+  color: var(--navbar-text) !important;
+  font-weight: 600;
+}
+
+/* Content sections */
+.content-section {
+  background: var(--bg-primary);
+  padding: 20px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+[data-theme="dark"] .content-section {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* Article styles */
+.article-title {
+  color: var(--text-primary);
+  transition: color 0.3s ease;
+}
+
+.article-title:hover {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+.article-content {
+  white-space: pre-line;
+  color: var(--text-primary);
+}
+
+.article-metadata {
+  padding-bottom: 1px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.article-metadata a:hover {
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.article-img {
+  height: 65px;
+  width: 65px;
+  margin-right: 16px;
+  border-radius: 50%;
+}
+
+/* Account styles */
+.account-img {
+  height: 125px;
+  width: 125px;
+  margin-right: 20px;
+  margin-bottom: 16px;
+  border-radius: 50%;
+}
+
+.account-heading {
+  font-size: 2.5rem;
+  color: var(--text-primary);
+}
+
+/* Theme toggle button */
+.theme-toggle {
+  background: none;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+  background: var(--bg-accent);
+  border-color: var(--accent-color);
+}
+
+/* Star ratings */
+.star-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.star {
+  color: #ffc107;
+  font-size: 1.2rem;
+}
+
+.star.empty {
+  color: var(--text-muted);
+}
+
+/* Review section */
+.review-item {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  transition: all 0.3s ease;
+}
+
+.review-item:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+[data-theme="dark"] .review-item:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.review-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.like-btn, .dislike-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.like-btn:hover {
+  color: var(--success-color);
+}
+
+.dislike-btn:hover {
+  color: var(--danger-color);
+}
+
+/* Card enhancements */
+.card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+[data-theme="dark"] .card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+/* Form controls */
+.form-control {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+}
+
+.form-control:focus {
+  background: var(--bg-primary);
+  border-color: var(--accent-color);
+  color: var(--text-primary);
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+.btn-primary:hover {
+  background-color: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+/* Alerts */
+.alert {
+  border: none;
+  border-radius: 8px;
+}
+
+/* Animation classes */
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(-20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+  body {
+    margin-top: 4rem;
+  }
+  
+  .content-section {
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .account-heading {
+    font-size: 2rem;
+  }
+  
+  .article-img, .account-img {
+    width: 50px;
+    height: 50px;
+  }
+}

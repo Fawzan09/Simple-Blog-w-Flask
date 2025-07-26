@@ -1,0 +1,89 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="content-section">
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">{{ legend }}</legend>
+            
+            <div class="form-group mb-3">
+                {{ form.rating.label(class="form-label") }}
+                {{ form.rating(class="form-select") }}
+                {% for error in form.rating.errors %}
+                    <div class="text-danger">{{ error }}</div>
+                {% endfor %}
+                
+                <!-- Interactive Star Rating -->
+                <div class="star-input mt-2" style="display: none;">
+                    <input type="hidden" name="star_rating" value="">
+                    <i class="far fa-star star"></i>
+                    <i class="far fa-star star"></i>
+                    <i class="far fa-star star"></i>
+                    <i class="far fa-star star"></i>
+                    <i class="far fa-star star"></i>
+                </div>
+                <small class="form-text text-muted">Rate this post from 1 to 5 stars</small>
+            </div>
+            
+            <div class="form-group mb-3">
+                {{ form.comment.label(class="form-label") }}
+                {{ form.comment(class="form-control", rows="4") }}
+                {% for error in form.comment.errors %}
+                    <div class="text-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+        </fieldset>
+        
+        <div class="form-group">
+            {{ form.submit(class="btn btn-primary") }}
+            <a class="btn btn-secondary ms-2" href="{{ url_for('posts.post', post_id=post.id) }}">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<div class="content-section">
+    <h4><i class="fas fa-eye me-2"></i>Post Preview</h4>
+    <article class="media mb-4">
+        <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}">
+        <div class="media-body">
+            <div class="article-metadata">
+                <a class="me-2" href="{{ url_for('users.user_posts', username=post.author.username) }}">{{ post.author.username }}</a>
+                <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+            </div>
+            <h2><a class="article-title" href="{{ url_for('posts.post', post_id=post.id) }}">{{ post.title }}</a></h2>
+            <p class="article-content">{{ post.content[:200] }}{% if post.content|length > 200 %}...{% endif %}</p>
+        </div>
+    </article>
+</div>
+
+<script>
+// Show interactive star rating
+document.addEventListener('DOMContentLoaded', function() {
+    const selectElement = document.querySelector('select[name="rating"]');
+    const starContainer = document.querySelector('.star-input');
+    
+    if (selectElement && starContainer) {
+        // Hide select, show stars
+        selectElement.style.display = 'none';
+        starContainer.style.display = 'block';
+        
+        // Sync initial value
+        if (selectElement.value) {
+            const rating = parseInt(selectElement.value);
+            const hiddenInput = starContainer.querySelector('input[type="hidden"]');
+            hiddenInput.value = rating;
+            
+            // Update star display
+            const stars = starContainer.querySelectorAll('.star');
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.className = 'fas fa-star star';
+                } else {
+                    star.className = 'far fa-star star empty';
+                }
+            });
+        }
+    }
+});
+</script>
+{% endblock content %}

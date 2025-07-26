@@ -1,0 +1,89 @@
+<!-- Review List Component -->
+{% if reviews %}
+<div class="content-section">
+    <h4><i class="fas fa-star me-2"></i>Reviews ({{ reviews|length }})</h4>
+    
+    <!-- Average Rating Display -->
+    {% if post.get_average_rating() > 0 %}
+    <div class="mb-3 p-3 bg-light rounded">
+        <div class="d-flex align-items-center">
+            <div class="star-rating me-3" data-rating="{{ post.get_average_rating() }}">
+                <!-- Stars will be populated by JavaScript -->
+            </div>
+            <span class="h5 mb-0">{{ "%.1f"|format(post.get_average_rating()) }}</span>
+            <span class="text-muted ms-2">out of 5 ({{ post.get_rating_count() }} reviews)</span>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Individual Reviews -->
+    {% for review in reviews %}
+    <div class="review-item" data-review-id="{{ review.id }}">
+        <div class="d-flex align-items-start">
+            <img class="rounded-circle me-3" src="{{ url_for('static', filename='profile_pics/' + review.reviewer.image_file) }}" 
+                 style="width: 40px; height: 40px;" alt="{{ review.reviewer.username }}">
+            
+            <div class="flex-grow-1">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                        <h6 class="mb-1">
+                            <a href="{{ url_for('users.user_posts', username=review.reviewer.username) }}" 
+                               class="text-decoration-none">{{ review.reviewer.username }}</a>
+                        </h6>
+                        <div class="star-rating" data-rating="{{ review.rating }}">
+                            <!-- Stars will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    <small class="text-muted">{{ review.date_posted.strftime('%Y-%m-%d %H:%M') }}</small>
+                </div>
+                
+                {% if review.comment %}
+                <p class="mb-2">{{ review.comment }}</p>
+                {% endif %}
+                
+                <!-- Review Actions -->
+                <div class="review-actions">
+                    {% if current_user.is_authenticated %}
+                    <button class="like-btn btn btn-sm btn-outline-success" data-review-id="{{ review.id }}">
+                        <i class="fas fa-thumbs-up"></i>
+                        <span class="likes-count">{{ review.likes }}</span>
+                    </button>
+                    <button class="dislike-btn btn btn-sm btn-outline-danger" data-review-id="{{ review.id }}">
+                        <i class="fas fa-thumbs-down"></i>
+                        <span class="dislikes-count">{{ review.dislikes }}</span>
+                    </button>
+                    {% endif %}
+                    
+                    {% if current_user == review.reviewer %}
+                    <a href="{{ url_for('reviews.edit_review', review_id=review.id) }}" 
+                       class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    {% endif %}
+                    
+                    {% if current_user == review.reviewer or current_user == post.author %}
+                    <form class="d-inline" method="POST" action="{{ url_for('reviews.delete_review', review_id=review.id) }}">
+                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                                onclick="return confirm('Are you sure you want to delete this review?')">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="content-section text-center">
+    <i class="fas fa-star fa-3x text-muted mb-3"></i>
+    <h5>No reviews yet</h5>
+    <p class="text-muted">Be the first to review this post!</p>
+    {% if current_user.is_authenticated and current_user != post.author %}
+    <a href="{{ url_for('reviews.add_review', post_id=post.id) }}" class="btn btn-primary">
+        <i class="fas fa-plus me-1"></i>Add Review
+    </a>
+    {% endif %}
+</div>
+{% endif %}

@@ -1,0 +1,127 @@
+{% extends "layout.html" %}
+{% block content %}
+    <!-- Search Header -->
+    <div class="content-section">
+        <h2><i class="fas fa-search me-2"></i>Search Results</h2>
+        {% if query %}
+            <p class="text-muted">Showing results for: <strong>"{{ query }}"</strong></p>
+        {% else %}
+            <p class="text-muted">Enter a search term to find posts</p>
+        {% endif %}
+        
+        <!-- Search Form -->
+        <form method="GET" action="{{ url_for('main.search') }}" class="d-flex mb-3">
+            <input class="form-control me-2" type="search" placeholder="Search posts..." 
+                   name="q" value="{{ query if query else '' }}" aria-label="Search">
+            <button class="btn btn-primary" type="submit">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>
+    </div>
+
+    <!-- Search Results -->
+    {% if posts.items %}
+        <div class="content-section">
+            <h4>Found {{ posts.total }} result(s)</h4>
+        </div>
+        
+        {% for post in posts.items %}
+            <article class="media content-section">
+                <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}">
+                <div class="media-body">
+                    <div class="article-metadata">
+                        <a class="me-2" href="{{ url_for('users.user_posts', username=post.author.username) }}">{{ post.author.username }}</a>
+                        <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+                        
+                        <!-- Display post rating if available -->
+                        {% if post.get_average_rating() > 0 %}
+                        <div class="mt-1">
+                            <div class="star-rating d-inline-flex align-items-center" data-rating="{{ post.get_average_rating() }}">
+                                <!-- Stars will be populated by JavaScript -->
+                            </div>
+                            <small class="text-muted ms-2">({{ post.get_rating_count() }} reviews)</small>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <h2><a class="article-title" href="{{ url_for('posts.post', post_id=post.id) }}">{{ post.title }}</a></h2>
+                    <p class="article-content">{{ post.content[:300] }}{% if post.content|length > 300 %}...{% endif %}</p>
+                    
+                    <!-- Highlight search matches -->
+                    {% if query %}
+                    <script>
+                        // Simple text highlighting
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const searchTerm = '{{ query }}';
+                            const content = document.querySelector('[data-post-id="{{ post.id }}"] .article-content');
+                            const title = document.querySelector('[data-post-id="{{ post.id }}"] .article-title');
+                            
+                            if (content && searchTerm) {
+                                const regex = new RegExp(`(${searchTerm})`, 'gi');
+                                content.innerHTML = content.innerHTML.replace(regex, '<mark>$1</mark>');
+                            }
+                            if (title && searchTerm) {
+                                const regex = new RegExp(`(${searchTerm})`, 'gi');
+                                title.innerHTML = title.innerHTML.replace(regex, '<mark>$1</mark>');
+                            }
+                        });
+                    </script>
+                    {% endif %}
+                </div>
+            </article>
+        {% endfor %}
+        
+        <!-- Pagination -->
+        {% if posts.pages > 1 %}
+        <nav aria-label="Search results pagination">
+            <ul class="pagination justify-content-center">
+                {% if posts.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('main.search', q=query, page=posts.prev_num) }}">Previous</a>
+                    </li>
+                {% endif %}
+                
+                {% for page_num in posts.iter_pages() %}
+                    {% if page_num %}
+                        {% if page_num != posts.page %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('main.search', q=query, page=page_num) }}">{{ page_num }}</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ page_num }}</span>
+                            </li>
+                        {% endif %}
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if posts.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('main.search', q=query, page=posts.next_num) }}">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+        
+    {% elif query %}
+        <div class="content-section text-center">
+            <i class="fas fa-search fa-3x text-muted mb-3"></i>
+            <h4>No results found</h4>
+            <p class="text-muted">Try different keywords or check your spelling</p>
+        </div>
+    {% endif %}
+    
+    <!-- Add data attribute for JavaScript highlighting -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const articles = document.querySelectorAll('article.media');
+            articles.forEach((article, index) => {
+                article.setAttribute('data-post-id', '{{ posts.items[loop.index0].id if posts.items }}');
+            });
+        });
+    </script>
+{% endblock content %}
